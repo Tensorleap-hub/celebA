@@ -13,7 +13,7 @@ if __name__ == "__main__":
     # Hyper-params
     batch_size = 32
     num_epochs = 10
-    weights_path = "/Users/daniellebenbashat/Projects/projects_hub/celebA/celebA/models/GenderAgeWeightedBCELoss.h5"
+    weights_path = None
     loss_name = 'weighted_loss'  # binary_crossentropy # binary_focal_crossentropy
 
     # Build the dataset object
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     model = build_model(num_features=celeba.num_features)
     model.summary()
 
-    if weights_path:
+    if weights_path is not None:
         model.load_weights(weights_path)
 
     model.compile(optimizer='adam', loss=get_weighted_loss(class_weights), metrics=['binary_accuracy'])
