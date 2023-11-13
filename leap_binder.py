@@ -1,64 +1,86 @@
-from typing import List, Union
+from typing import Union
 
+import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.datasets import mnist
-from tensorflow.keras.utils import to_categorical
+import PIL.Image as Image
+
 
 # Tensorleap imports
-from code_loader import leap_binder
-from code_loader.contract.datasetclasses import PreprocessResponse 
-from code_loader.contract.enums import Metric, DatasetMetadataType
 from code_loader.contract.visualizer_classes import LeapHorizontalBar
+from code_loader.contract.datasetclasses import PreprocessResponse
+from code_loader import leap_binder
 
-# Preprocess Function
-def preprocess_func() -> List[PreprocessResponse]:
-    (train_X, train_Y), (val_X, val_Y) = mnist.load_data()
+from celebA.utils.gcs_utils import _download
+from celebA.data.preprocess import preprocess_response
+from celebA.config import *
+from celebA.utils.metrics_utils import calc_class_metrics_dic
 
-    train_X = np.expand_dims(train_X, axis=-1)  # Reshape :,28,28 -> :,28,28,1
-    train_X = train_X / 255                       # Normalize to [0,1]
-    train_Y = to_categorical(train_Y)           # Hot Vector
-    
-    val_X = np.expand_dims(val_X, axis=-1)  # Reshape :,28,28 -> :,28,28,1
-    val_X = val_X / 255                     # Normalize to [0,1]
-    val_Y = to_categorical(val_Y)           # Hot Vector
 
-    # Generate a PreprocessResponse for each data slice, to later be read by the encoders.
-    # The length of each data slice is provided, along with the data dictionary.
-    # In this example we pass `images` and `labels` that later are encoded into the inputs and outputs 
-    train = PreprocessResponse(length=len(train_X), data={'images': train_X, 'labels': train_Y})
-    val = PreprocessResponse(length=len(val_X), data={'images': val_X, 'labels': val_Y})
-    response = [train, val]
-    return response
 
-# Input encoder fetches the image with the index `idx` from the `images` array set in
-# the PreprocessResponse data. Returns a numpy array containing the sample's image. 
+# Input encoder fetches the image with the index `idx` from the data from set in
+# the PreprocessResponse's data.
 def input_encoder(idx: int, preprocess: PreprocessResponse) -> np.ndarray:
-    return preprocess.data['images'][idx].astype('float32')
+    tf_data = preprocess.data['tf_data']
+    sample = next(iter(tf_data.skip(idx)))
 
-# Ground truth encoder fetches the label with the index `idx` from the `labels` array set in
-# the PreprocessResponse's data. Returns a numpy array containing a hot vector label correlated with the sample.
-def gt_encoder(idx: int, preprocessing: PreprocessResponse) -> np.ndarray:
-    return preprocessing.data['labels'][idx].astype('float32')
+    fname = sample[0].numpy().decode('utf-8')
+    fpath = image_path + f'/{fname}'
+    fpath = _download(fpath)
+    image = Image.open(fpath)
 
-# Metadata functions allow to add extra data for a later use in analysis.
-# This metadata adds the int digit of each sample (not a hot vector).
-def metadata_label(idx: int, preprocess: PreprocessResponse) -> int:
-    one_hot_digit = gt_encoder(idx, preprocess)
-    digit = one_hot_digit.argmax()
-    digit_int = int(digit)
-    return digit_int
+    # center crop
+    width, height = image.size
+    left = (width - celeba_face_size) / 2
+    top = (height - celeba_face_size) / 2
+    right = (width + celeba_face_size) / 2
+    bottom = (height + celeba_face_size) / 2
+    image = image.crop((left, top, right, bottom))
+    image = image.resize((IMAGE_SIZE, IMAGE_SIZE))
+
+    return np.array(image)/255
+
+
+def get_sample_row(idx: int, preprocess: Union[PreprocessResponse, list]) -> pd.Series:
+    tf_data = preprocess.data['tf_data']
+    cols = preprocess.data['columns']
+    sample = next(iter(tf_data.skip(idx)))
+    labels_values = sample[1].numpy().astype(np.int32)
+    return pd.Series(index=cols, data=labels_values[:len(cols)])
+
+
+def gt_encoder(idx: int, preprocess: Union[PreprocessResponse, list]) -> np.ndarray:
+    row = get_sample_row(idx, preprocess)
+    labels_vec = np.array(row[LABELS] == 1)
+    return labels_vec.astype(np.int32)
+
+
+def metadata_dic_vals(idx: int, preprocess: Union[PreprocessResponse, list]) -> dict:
+    row = get_sample_row(idx, preprocess).astype(np.float32)
+    row = dict(row)
+    for k, v in row.items():
+        row[k] = float(v)
+    return dict(row)
 
 
 def bar_visualizer(data: np.ndarray) -> LeapHorizontalBar:
+    """ Use the default TL horizontal bar just with the classes names added """
     return LeapHorizontalBar(data, LABELS)
 
 
-LABELS = ['0','1','2','3','4','5','6','7','8','9']
-# Dataset binding functions to bind the functions above to the `Dataset Instance`.
-leap_binder.set_preprocess(function=preprocess_func)
+# -------------- Dataset binding functions: --------------
+
+
+leap_binder.set_preprocess(function=preprocess_response)
+
 leap_binder.set_input(function=input_encoder, name='image')
+
 leap_binder.set_ground_truth(function=gt_encoder, name='classes')
-leap_binder.set_metadata(function=metadata_label, metadata_type=DatasetMetadataType.int, name='label')
+
 leap_binder.add_prediction(name='classes', labels=LABELS)
+
+leap_binder.set_metadata(metadata_dic_vals, 'metadata_dic')
+
+leap_binder.add_custom_metric(calc_class_metrics_dic, 'class_metrics_dic')
+
 leap_binder.set_visualizer(name='horizontal_bar_classes', function=bar_visualizer, visualizer_type=LeapHorizontalBar.type)
+

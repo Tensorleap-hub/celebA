@@ -6,3 +6,8 @@ include:
   - leap_binder.py
   - leap_test.py
   - leap_custom_test.py
+  - celebA/data/preprocess.py
+  - celebA/config.py
+  - celebA/utils/gcs_utils.py
+  - celebA/utils/metrics_utils.py
+  - celebA/utils/loss_utils.py
