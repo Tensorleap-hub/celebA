@@ -1,5 +1,7 @@
 # CelebA Dataset Gender and Age Group Prediction with MobileNetV2
 
+![Untitled](images/BackgroundImg.png)
+
 This project showcases a deep learning classification task for predicting the gender and age group of face individuals in images. We train a MobileNetV2 model to perform this task on CelebA benchmark using Keras and Tensorflow implementation.
 
 ### The Dataset
