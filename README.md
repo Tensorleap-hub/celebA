@@ -2,11 +2,11 @@
 
 ![Untitled](images/BackgroundImg.png)
 
-This project showcases a deep learning classification task for predicting the gender and age group of face individuals in images. We train a MobileNetV2 model to perform this task on CelebA benchmark using Keras and Tensorflow implementation.
+This project showcases a deep learning classification task for predicting the gender and age group of face individuals in images. We train a [MobileNetV2](https://arxiv.org/abs/1801.04381) model to perform this task on CelebA benchmark using Keras and Tensorflow implementation.
 
 ### The Dataset
 
-The dataset is a large-scale face dataset with attribute-based annotations. Cropped and aligned face regions are utilized as the training source. The data consist of 162,770 train images and 39,829 test images.
+The [dataset](https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) is a large-scale face dataset with attribute-based annotations. Cropped and aligned face regions are utilized as the training source. The data consist of 162,770 train images and 39,829 test images.
 
 ### Methods
 
