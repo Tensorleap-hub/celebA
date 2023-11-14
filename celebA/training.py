@@ -7,14 +7,17 @@ from celebA.config import save_path, LABELS
 from celebA.utils.loss_utils import calculating_class_weights, get_weighted_loss
 
 
+# Training the model
 
 if __name__ == "__main__":
 
     # Hyper-params
+
     batch_size = 32
     num_epochs = 10
-    weights_path = None
-    loss_name = 'weighted_loss'  # binary_crossentropy # binary_focal_crossentropy
+    weights_path = None     # TODO: path to pretrained weights
+
+    loss_name = 'weighted_loss'  # binary_crossentropy # binary_focal_crossentropy # TODO: Choose a loss function
 
     # Build the dataset object
     celeba = CelebA(selected_features=LABELS)
@@ -24,7 +27,7 @@ if __name__ == "__main__":
 
     # Get class weights
     class_weights = calculating_class_weights(y_true)
-    loss = get_weighted_loss(class_weights) if loss_name == 'weighted_loss' else loss_name
+    loss = get_weighted_loss(class_weights) if loss_name == 'weighted_loss' else loss_name  # keep name loss function for Keras arg
 
     # Augmentations for training set
     train_datagen = ImageDataGenerator(rotation_range=20,
