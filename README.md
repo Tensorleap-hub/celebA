@@ -2,7 +2,7 @@
 
 This project showcases a deep learning classification task for predicting the gender and age group of face individuals in images. We train a MobileNetV2 model to perform this task on CelebA benchmark using Keras and Tensorflow implementation.
 
-### The Datast
+### The Dataset
 
 The dataset is a large-scale face dataset with attribute-based annotations. Cropped and aligned face regions are utilized as the training source. The data consist of 162,770 train images and 39,829 test images.
 
@@ -35,7 +35,6 @@ Looking at the differences for the actual Age labels vs the model's prediction i
 
 ![Untitled](images/ModelALatenSpaceAgePred.png)_Model's Latent Space colored by Age Prediction_
 
-
 We plot using TL dashboard the accuracy per class and indeed the Gender accuracy is around 90.5% and the Age accuracy is around 84%.
 
 ![Untitled](images/GenderAgeAccuracy.png)_Gender and Age Accuracy_
@@ -52,9 +51,9 @@ _Binray Accuracy per labels combination_
 
 _Gender and Age Accuracies per labels combination_
 
-The data counts distribution in the training set is in accordance to the model predictions 'Young' samples consist of around 77% of the data and for 'Male' samples consist around of 42%.
+The data labels distribution  in the training set is imbalanced, particularly to 'Age'.  'Young' samples consist of around 77% of the data and 'Male' samples consist around of 42%.  
 
-The data is imbalanced, particularly to 'Age', which might have caused the model to be more likely to predict 'Female' and 'Young'. Now we can fine-tune the model using a weighted loss function or by choosing a sampling method that will balance the distribution (upsampling/ downsampling) to improve the performance.
+This might have caused the model to be more biased, likely to predict 'Female' and 'Young' rather than 'Male' and 'Non-Young' . Now we can fine-tune the model using a weighted loss function or by choosing a sampling method that will balance the distribution (upsampling/ downsampling) to improve the performance.
 
 ![Untitled](images/AgeGenderCountTrainSet.png)
 _Data samples count per label_
@@ -78,7 +77,9 @@ Also, in terms of the four cohorts: the accuracy is much better for the 'Non-You
 ![Untitled](images/GenderAgeAccModelsAB.png)
 _Binary Accuracy for per labels combination: BCE-model (up) and Weighted-BCE model (bottom)_
 
+
 ## Sample Analysis
+
 
 We can observe that the more 'Male-like' features the model extracts are around the chin and under eye and neck. 
 When the more 'Women-like' features are around the hair. Interesting to see that the 'Young-like' features are similar to those who direct the prediction towards Woman.
