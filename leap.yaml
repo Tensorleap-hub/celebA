@@ -6,6 +6,7 @@ include:
   - leap_binder.py
   - leap_test.py
   - leap_custom_test.py
+  - leap_mapping.yaml
   - celebA/data/preprocess.py
   - celebA/config.py
   - celebA/utils/gcs_utils.py
