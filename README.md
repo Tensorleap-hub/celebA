@@ -140,7 +140,7 @@ with `curl`:
 
 ```
 
-curl -s <https://raw.githubusercontent.com/tensorleap/cli-go/master/install.sh> | bash
+curl -s https://raw.githubusercontent.com/tensorleap/leap-cli/master/install.sh | bash
 
 ```
 
@@ -148,7 +148,7 @@ with `wget`:
 
 ```
 
-wget -q -O - <https://raw.githubusercontent.com/tensorleap/cli-go/master/install.sh> | bash
+wget -q -O - https://raw.githubusercontent.com/tensorleap/leap-cli/master/install.sh | bash
 
 ```
 
