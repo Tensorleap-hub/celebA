@@ -139,17 +139,13 @@ Before you begin, ensure that you have the following prerequisites installed:
 with `curl`:
 
 ```
-
 curl -s https://raw.githubusercontent.com/tensorleap/leap-cli/master/install.sh | bash
-
 ```
 
 with `wget`:
 
 ```
-
 wget -q -O - https://raw.githubusercontent.com/tensorleap/leap-cli/master/install.sh | bash
-
 ```
 
 - CLI repository: https://github.com/tensorleap/leap-cli
@@ -161,9 +157,7 @@ wget -q -O - https://raw.githubusercontent.com/tensorleap/leap-cli/master/instal
 To login to Tensorealp:
 
 ```
-
 leap auth login [api key] [api url].
-
 ```
 
 - See how to generate a CLI token [here](https://docs.tensorleap.ai/platform/resources-management)
@@ -173,15 +167,13 @@ leap auth login [api key] [api url].
 Navigate to the project directory.
 
 To push your local project files (model + code files):
-
+```
 leap projects push <modelPath> [flags]
-
+```
 To deploy only the project's code files: 
 
 ```
-
 leap code push
-
 ```
 
 ### Tensorleap files
@@ -195,7 +187,6 @@ leap.yaml file is configured to a dataset in your Tensorleap environment and is 
 For any additional file being used we add its path under `include` parameter:
 
 ```
-
 include:
 
  - leap_binder.py
@@ -213,9 +204,7 @@ leap_binder.py file
 To test the system we can run `leap_test.py` file using poetry:
 
 ```
-
 poetry run test
-
 ```
 
 This file will execute several tests on leap_binder.py script to assert that the implemented binding functions: preprocess, encoders, metadata, etc, run smoothly.
