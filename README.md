@@ -126,30 +126,33 @@ To assess it, we split the confusion matrix for the Age prediction and indeed we
 
 ## Tensorleap CLI Installation
 
-
 #### Prerequisites
 
 Before you begin, ensure that you have the following prerequisites installed:
 
 - [Python](https://www.python.org/) (version 3.7 or higher)
+
 - [Poetry](https://python-poetry.org/)
 
 <br>
 
-
 with `curl`:
 
 ```
+
 curl -s <https://raw.githubusercontent.com/tensorleap/cli-go/master/install.sh> | bash
+
 ```
 
 with `wget`:
 
 ```
+
 wget -q -O - <https://raw.githubusercontent.com/tensorleap/cli-go/master/install.sh> | bash
+
 ```
 
-CLI repository: https://github.com/tensorleap/cli-go
+- CLI repository: https://github.com/tensorleap/leap-cli
 
 ## Tensorleap CLI Usage
 
@@ -158,50 +161,50 @@ CLI repository: https://github.com/tensorleap/cli-go
 To login to Tensorealp:
 
 ```
-tensorleap auth login [api key] [api url].
+
+leap auth login [api key] [api url].
 
 ```
 
-- API Key is your Tensorleap token (see how to generate a CLI token in the section below).
-- API URL is your Tensorleap environment URL: CLIENT_NAME.tensorleap.ai
+- See how to generate a CLI token [here](https://docs.tensorleap.ai/platform/resources-management)
 
-<br>
+## Tensorleap Project Deployment
 
-**How To Generate CLI Token from the UI**
+Navigate to the project directory.
 
-1. Login to the platform in 'CLIENT_NAME.tensorleap.ai'
-2. Scroll down to the bottom of the Resources Management page, then click `GENERATE CLI TOKEN` in the bottom-left corner.
-3. Once a CLI token is generated, just copy the whole text and paste it into your shell:
+To push your local project files (model + code files):
 
-```
-tensorleap auth login [api key] [api url]
-```
+leap projects push <modelPath> [flags]
 
-## Tensorleap Dataset Deployment
-
-To deploy your local changes:
+To deploy only the project's code files: 
 
 ```
+
 leap code push
+
 ```
 
 ### Tensorleap files
 
 Tensorleap files in the repository include `leap_binder.py` and `leap.yaml`. The files consist of the required configurations to make the code integrate with the Tensorleap engine:
 
-**leap.yaml**
+leap.yaml
 
 leap.yaml file is configured to a dataset in your Tensorleap environment and is synced to the dataset saved in the environment.
 
 For any additional file being used we add its path under `include` parameter:
 
 ```
+
 include:
+
  - leap_binder.py
+
     ...
+
 ```
 
-**leap_binder.py file**
+leap_binder.py file
 
 `leap_binder.py` configure all binding functions used to bind to Tensorleap engine. These are the functions used to evaluate and train the model, visualize the variables, and enrich the analysis with external metadata variables
 
@@ -210,9 +213,11 @@ include:
 To test the system we can run `leap_test.py` file using poetry:
 
 ```
+
 poetry run test
+
 ```
 
 This file will execute several tests on leap_binder.py script to assert that the implemented binding functions: preprocess, encoders, metadata, etc, run smoothly.
 
-*For further explanation please refer to the [docs](https://docs.tensorleap.ai/)*
+For further explanation please refer to the [docs](https://docs.tensorleap.ai/)
