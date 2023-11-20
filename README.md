@@ -4,6 +4,8 @@
 
 This project showcases a deep learning classification task for predicting the gender and age group of face individuals in images. We train a [MobileNetV2](https://arxiv.org/abs/1801.04381) model to perform this task on [CelebA](https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) benchmark using Keras and Tensorflow implementation.
 
+Using Tensorleap we can easily debug and improve the model development process. This example project demonstrates how. 
+
 ### The Dataset
 
 The dataset is a large-scale face dataset with attribute-based annotations. Cropped and aligned face regions are utilized as the training source. The data consist of 162,770 train images and 39,829 test images.
@@ -14,7 +16,6 @@ Training the MobileNetV2, with initialized weights - pretrained on Imagenet, wit
 
 First, the model was trained for 5 epochs with a batch size of 64, on Binary Cross Entropy (BCE) loss, reaching to accuracy of 87.7% and loss value of 0.6497 for test set. 
 
-Using Tensorleap we can easily debug and improve the model development process. This example project demonstrates how. 
 
 
 ### Latent Space Exploration
