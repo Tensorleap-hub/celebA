@@ -1,14 +1,13 @@
-codeIntegrationId: 653108b5b1eac10019e7f253
-projectId: 65310877b1eac10019e7f24f
-secretId: 
-entryFile: 'leap_binder.py'
+codeIntegrationId: 655c9593cbcc1600199dbb47
+projectId: 655c958acbcc1600199dbb43
+secretId: ""
+entryFile: leap_binder.py
 include:
-  - leap_binder.py
-  - leap_test.py
-  - leap_custom_test.py
-  - leap_mapping.yaml
-  - celebA/data/preprocess.py
-  - celebA/config.py
-  - celebA/utils/gcs_utils.py
-  - celebA/utils/metrics_utils.py
-  - celebA/utils/loss_utils.py
+    - leap_binder.py
+    - leap_test.py
+    - leap_custom_test.py
+    - leap_mapping.yaml
+    - celebA/data/**
+    - celebA/archs/**
+    - celebA/utils/**
+    - celebA/config.py
