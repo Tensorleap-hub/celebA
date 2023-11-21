@@ -28,6 +28,6 @@ landmarks_path = 'celebA/list_landmarks_celeba.csv'
 align_landmarks_path = 'celebA/list_landmarks_align_celeba.csv'
 celeb_id_path = 'celebA/identity_CelebA.txt'
 
-save_path = "models/weights"
+save_path = "../models/weights"
 
 celeba_face_size = 178

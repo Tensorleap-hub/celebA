@@ -2,7 +2,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ModelCheckpoint
 
 from celebA.data.CelebA import CelebA
-from celebA.models.archs.MobileNetV2 import build_model
+from celebA.archs.MobileNetV2 import build_model
 from celebA.config import save_path, LABELS
 from celebA.utils.loss_utils import calculating_class_weights, get_weighted_loss
 
