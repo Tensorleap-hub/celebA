@@ -49,7 +49,7 @@ def class_accuracy(y_true, y_pred, cls_ind) -> tf.Tensor:
     return backend.mean(tf.equal(y_true, y_pred), axis=-1)
 
 
-def calc_class_metrics_dic(y_true, y_pred, threshold=0.5):
+def calc_class_metrics_dic(y_true, y_pred):
     """
     Calculate multiple metrics for each class.
 
@@ -61,6 +61,8 @@ def calc_class_metrics_dic(y_true, y_pred, threshold=0.5):
     Returns:
         dictionary with multi metrics scores
     """
+    threshold = 0.5
+
     y_pred = tf.convert_to_tensor(y_pred)
     threshold = tf.cast(threshold, y_pred.dtype)
     y_pred = tf.cast(y_pred > threshold, y_pred.dtype)
