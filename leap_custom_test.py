@@ -1,4 +1,5 @@
 from celebA.data.preprocess import preprocess_response
+from celebA.utils.loss_utils import model_loss
 from leap_binder import input_encoder, gt_encoder, get_sample_row, metadata_dic_vals, calc_class_metrics_dic
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,5 +24,6 @@ if __name__ == "__main__":
     res = calc_class_metrics_dic(y_true=np.expand_dims(gt, 0), y_pred=pred)
 
     res2 = calc_class_metrics_dic(y_true=np.array([[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]), y_pred=np.array([[0.9, 0.3], [0.7, 0.2], [0.8, 0.99]]))
+    loss = model_loss(gt, pred)
     metadata_vals = metadata_dic_vals(i, set)
     plt.imshow(img)

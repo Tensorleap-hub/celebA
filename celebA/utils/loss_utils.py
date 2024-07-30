@@ -17,5 +17,14 @@ def get_weighted_loss(weights):
         y_true = tf.cast(y_true, tf.float32)
         return K.mean \
             ((weights[:, 0] ** (1 - y_true)) * (weights[:, 1] ** (y_true)) * K.binary_crossentropy(y_true, y_pred),
-                      axis=-1)
+             axis=-1)
+
     return weighted_loss
+
+
+def model_loss(y_true, y_pred):
+    weights = calculating_class_weights(y_true)
+    y_true = tf.cast(y_true, tf.float32)
+    return K.mean \
+        ((weights[:, 0] ** (1 - y_true)) * (weights[:, 1] ** (y_true)) * K.binary_crossentropy(y_true, y_pred),
+         axis=-1)

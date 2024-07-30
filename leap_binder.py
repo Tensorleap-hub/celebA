@@ -13,6 +13,7 @@ from code_loader import leap_binder
 from celebA.utils.gcs_utils import _download
 from celebA.data.preprocess import preprocess_response
 from celebA.config import *
+from celebA.utils.loss_utils import model_loss
 from celebA.utils.metrics_utils import calc_class_metrics_dic
 
 
@@ -83,6 +84,8 @@ leap_binder.set_metadata(metadata_dic_vals, 'metadata_dic')
 leap_binder.add_custom_metric(calc_class_metrics_dic, 'class_metrics_dic')
 
 leap_binder.set_visualizer(name='horizontal_bar_classes', function=bar_visualizer, visualizer_type=LeapHorizontalBar.type)
+
+leap_binder.add_custom_loss(name='weigthed_loss', function=model_loss)
 
 if __name__ == "__main__":
     leap_binder.check()

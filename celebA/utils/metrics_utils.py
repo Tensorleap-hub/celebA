@@ -72,7 +72,7 @@ def calc_class_metrics_dic(y_true, y_pred):
     for cls in LABELS:
         cls_ind = LABELS.index(cls)
         res = class_accuracy(y_true, y_pred, cls_ind)
-        res_dic[f"{cls}_out"] = tf.squeeze(y_pred[:, cls_ind:cls_ind + 1], axis=0)
+        res_dic[f"{cls}_out"] = tf.reduce_sum(y_pred[:, cls_ind:cls_ind + 1], -1)
         res_dic[f"{cls}_acc"] = res
         res_dic[f"{cls}_tp"] = tf.reduce_sum(tps[:, cls_ind:cls_ind + 1], -1)
         res_dic[f"{cls}_tn"] = tf.reduce_sum(tns[:, cls_ind:cls_ind + 1], -1)
