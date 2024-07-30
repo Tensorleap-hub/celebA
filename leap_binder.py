@@ -51,7 +51,7 @@ def get_sample_row(idx: int, preprocess: Union[PreprocessResponse, list]) -> pd.
 def gt_encoder(idx: int, preprocess: Union[PreprocessResponse, list]) -> np.ndarray:
     row = get_sample_row(idx, preprocess)
     labels_vec = np.array(row[LABELS] == 1)
-    return labels_vec.astype(np.int32)
+    return labels_vec.astype(np.float32)
 
 
 def metadata_dic_vals(idx: int, preprocess: Union[PreprocessResponse, list]) -> dict:
@@ -83,4 +83,7 @@ leap_binder.set_metadata(metadata_dic_vals, 'metadata_dic')
 leap_binder.add_custom_metric(calc_class_metrics_dic, 'class_metrics_dic')
 
 leap_binder.set_visualizer(name='horizontal_bar_classes', function=bar_visualizer, visualizer_type=LeapHorizontalBar.type)
+
+if __name__ == "__main__":
+    leap_binder.check()
 
