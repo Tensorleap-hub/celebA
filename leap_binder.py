@@ -3,7 +3,8 @@ from typing import Union
 import pandas as pd
 import numpy as np
 import PIL.Image as Image
-
+from keras import backend as K
+import tensorflow as tf
 
 # Tensorleap imports
 from code_loader.contract.visualizer_classes import LeapHorizontalBar
@@ -14,7 +15,7 @@ from celebA.utils.gcs_utils import _download
 from celebA.data.preprocess import preprocess_response
 from celebA.config import *
 from celebA.utils.metrics_utils import calc_class_metrics_dic
-
+from celebA.training import class_weights
 
 
 # Input encoder fetches the image with the index `idx` from the data from set in
@@ -37,7 +38,7 @@ def input_encoder(idx: int, preprocess: PreprocessResponse) -> np.ndarray:
     image = image.crop((left, top, right, bottom))
     image = image.resize((IMAGE_SIZE, IMAGE_SIZE))
 
-    return np.array(image)/255
+    return np.array(image) / 255
 
 
 def get_sample_row(idx: int, preprocess: Union[PreprocessResponse, list]) -> pd.Series:
@@ -51,7 +52,7 @@ def get_sample_row(idx: int, preprocess: Union[PreprocessResponse, list]) -> pd.
 def gt_encoder(idx: int, preprocess: Union[PreprocessResponse, list]) -> np.ndarray:
     row = get_sample_row(idx, preprocess)
     labels_vec = np.array(row[LABELS] == 1)
-    return labels_vec.astype(np.int32)
+    return labels_vec.astype(np.float32)
 
 
 def metadata_dic_vals(idx: int, preprocess: Union[PreprocessResponse, list]) -> dict:
@@ -65,6 +66,19 @@ def metadata_dic_vals(idx: int, preprocess: Union[PreprocessResponse, list]) -> 
 def bar_visualizer(data: np.ndarray) -> LeapHorizontalBar:
     """ Use the default TL horizontal bar just with the classes names added """
     return LeapHorizontalBar(data, LABELS)
+
+
+def model_weighted_loss(y_true, y_pred):
+    y_true = tf.convert_to_tensor(y_true)
+    y_pred = tf.convert_to_tensor(y_pred)
+
+    y_true = tf.cast(y_true, tf.float32)
+    y_pred = tf.cast(y_pred, tf.float32)
+
+    weights = class_weights()
+    return K.mean \
+        ((weights[:, 0] ** (1 - y_true)) * (weights[:, 1] ** (y_true)) * K.binary_crossentropy(y_true, y_pred),
+         axis=-1)
 
 
 # -------------- Dataset binding functions: --------------
@@ -82,5 +96,10 @@ leap_binder.set_metadata(metadata_dic_vals, 'metadata_dic')
 
 leap_binder.add_custom_metric(calc_class_metrics_dic, 'class_metrics_dic')
 
-leap_binder.set_visualizer(name='horizontal_bar_classes', function=bar_visualizer, visualizer_type=LeapHorizontalBar.type)
+leap_binder.set_visualizer(name='horizontal_bar_classes', function=bar_visualizer,
+                           visualizer_type=LeapHorizontalBar.type)
 
+leap_binder.add_custom_loss(name='weighted_loss', function=model_weighted_loss)
+
+if __name__ == "__main__":
+    leap_binder.check()
