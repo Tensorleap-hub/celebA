@@ -65,7 +65,7 @@ def metadata_dic_vals(idx: int, preprocess: Union[PreprocessResponse, list]) -> 
 
 def bar_visualizer(data: np.ndarray) -> LeapHorizontalBar:
     """ Use the default TL horizontal bar just with the classes names added """
-    return LeapHorizontalBar(data, LABELS)
+    return LeapHorizontalBar(np.squeeze(data), LABELS)
 
 
 def model_weighted_loss(y_true, y_pred):

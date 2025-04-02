@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     row = get_sample_row(i, set)
     res = calc_class_metrics_dic(y_true=np.expand_dims(gt, 0), y_pred=pred)
-    loss = model_weighted_loss(y_true=np.expand_dims(gt, 0), y_pred=pred)
+    loss = model_weighted_loss(y_true=np.expand_dims(gt, 0), y_pred=pred.numpy())
 
     res_batch = calc_class_metrics_dic(y_true=np.array([[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]), y_pred=np.array([[0.9, 0.3], [0.7, 0.2], [0.8, 0.99]]))
     loss_batch = model_weighted_loss(y_true=np.array([[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]), y_pred=np.array([[0.9, 0.3], [0.7, 0.2], [0.8, 0.99]]))
