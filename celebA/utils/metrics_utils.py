@@ -1,5 +1,6 @@
-from typing import Tuple
+from typing import Tuple, Dict, Any
 
+import numpy as np
 import tensorflow as tf
 from keras import backend
 
@@ -49,7 +50,7 @@ def class_accuracy(y_true, y_pred, cls_ind) -> tf.Tensor:
     return backend.mean(tf.equal(y_true, y_pred), axis=-1)
 
 
-def calc_class_metrics_dic(y_true, y_pred):
+def calc_class_metrics_dic(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, Any]:
     """
     Calculate multiple metrics for each class.
 
@@ -71,11 +72,19 @@ def calc_class_metrics_dic(y_true, y_pred):
     tps, tns, fps, fns = calculate_binary_metrics(y_true, y_pred)
     for cls in LABELS:
         cls_ind = LABELS.index(cls)
-        res = class_accuracy(y_true, y_pred, cls_ind)
-        res_dic[f"{cls}_out"] = tf.reduce_sum(y_pred[:, cls_ind:cls_ind + 1], -1)
-        res_dic[f"{cls}_acc"] = res
-        res_dic[f"{cls}_tp"] = tf.reduce_sum(tps[:, cls_ind:cls_ind + 1], -1)
-        res_dic[f"{cls}_tn"] = tf.reduce_sum(tns[:, cls_ind:cls_ind + 1], -1)
-        res_dic[f"{cls}_fp"] = tf.reduce_sum(fps[:, cls_ind:cls_ind + 1], -1)
-        res_dic[f"{cls}_fn"] = tf.reduce_sum(fns[:, cls_ind:cls_ind + 1], -1)
+
+        acc = class_accuracy(y_true, y_pred, cls_ind)
+        out = tf.reduce_sum(y_pred[:, cls_ind:cls_ind + 1], -1)
+        tp = tf.reduce_sum(tps[:, cls_ind:cls_ind + 1], -1)
+        tn = tf.reduce_sum(tns[:, cls_ind:cls_ind + 1], -1)
+        fp = tf.reduce_sum(fps[:, cls_ind:cls_ind + 1], -1)
+        fn = tf.reduce_sum(fns[:, cls_ind:cls_ind + 1], -1)
+
+        # Convert all to numpy arrays
+        res_dic[f"{cls}_out"] = out.numpy()
+        res_dic[f"{cls}_acc"] = acc.numpy()
+        res_dic[f"{cls}_tp"] = tp.numpy()
+        res_dic[f"{cls}_tn"] = tn.numpy()
+        res_dic[f"{cls}_fp"] = fp.numpy()
+        res_dic[f"{cls}_fn"] = fn.numpy()
     return res_dic

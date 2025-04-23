@@ -65,10 +65,10 @@ def metadata_dic_vals(idx: int, preprocess: Union[PreprocessResponse, list]) -> 
 
 def bar_visualizer(data: np.ndarray) -> LeapHorizontalBar:
     """ Use the default TL horizontal bar just with the classes names added """
-    return LeapHorizontalBar(data, LABELS)
+    return LeapHorizontalBar(np.squeeze(data), LABELS)
 
 
-def model_weighted_loss(y_true, y_pred):
+def model_weighted_loss(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
     y_true = tf.convert_to_tensor(y_true)
     y_pred = tf.convert_to_tensor(y_pred)
 
@@ -76,9 +76,9 @@ def model_weighted_loss(y_true, y_pred):
     y_pred = tf.cast(y_pred, tf.float32)
 
     weights = class_weights()
-    return K.mean \
-        ((weights[:, 0] ** (1 - y_true)) * (weights[:, 1] ** (y_true)) * K.binary_crossentropy(y_true, y_pred),
-         axis=-1)
+    return (K.mean
+            ((weights[:, 0] ** (1 - y_true)) * (weights[:, 1] ** (y_true)) * K.binary_crossentropy(y_true, y_pred),
+         axis=-1)).numpy()
 
 
 # -------------- Dataset binding functions: --------------
