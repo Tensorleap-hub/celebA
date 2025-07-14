@@ -15,7 +15,6 @@ from celebA.utils.gcs_utils import _download
 from celebA.data.preprocess import preprocess_response
 from celebA.config import *
 from celebA.utils.metrics_utils import calc_class_metrics_dic
-from celebA.training import class_weights
 
 
 # Input encoder fetches the image with the index `idx` from the data from set in
@@ -68,18 +67,6 @@ def bar_visualizer(data: np.ndarray) -> LeapHorizontalBar:
     return LeapHorizontalBar(np.squeeze(data), LABELS)
 
 
-def model_weighted_loss(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
-    y_true = tf.convert_to_tensor(y_true)
-    y_pred = tf.convert_to_tensor(y_pred)
-
-    y_true = tf.cast(y_true, tf.float32)
-    y_pred = tf.cast(y_pred, tf.float32)
-
-    weights = class_weights()
-    return (K.mean
-            ((weights[:, 0] ** (1 - y_true)) * (weights[:, 1] ** (y_true)) * K.binary_crossentropy(y_true, y_pred),
-         axis=-1)).numpy()
-
 
 # -------------- Dataset binding functions: --------------
 
@@ -99,7 +86,6 @@ leap_binder.add_custom_metric(calc_class_metrics_dic, 'class_metrics_dic')
 leap_binder.set_visualizer(name='horizontal_bar_classes', function=bar_visualizer,
                            visualizer_type=LeapHorizontalBar.type)
 
-leap_binder.add_custom_loss(name='weighted_loss', function=model_weighted_loss)
 
 if __name__ == "__main__":
     leap_binder.check()

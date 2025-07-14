@@ -47,11 +47,7 @@ decorators:
         - outputKey: classes
           operation: GroundTruth
           id: '174'
-    outputs:
-      loss:
-        - inputKey: '0'
-          operation: Adam
-          id: '175'
+    outputs: {}
   - operation: GroundTruth
     data:
       type: GroundTruth
@@ -76,20 +72,6 @@ decorators:
         - inputKey: y_true
           operation: Metric
           id: '181'
-  - operation: Adam
-    data:
-      type: Optimizer
-      custom_input_keys:
-        - 175-0
-      arg_names:
-        - '0'
-    id: '175'
-    inputs:
-      '0':
-        - outputKey: loss
-          operation: BinaryCrossentropy
-          id: '173'
-    outputs: {}
   - operation: Visualizer
     data:
       type: Visualizer
