@@ -1,5 +1,5 @@
-codeIntegrationId: 66a8da54cfc10966555eef5f
-projectId: 65310877b1eac10019e7f24f
+codeIntegrationId: 68739d44464b88554b9ebba3
+projectId: 68739d3c464b88554b9ebb9d
 secretId: ""
 entryFile: leap_binder.py
 include:
@@ -7,6 +7,7 @@ include:
     - leap_test.py
     - leap_custom_test.py
     - leap_mapping.yaml
+    - requirements.txt
     - celebA/data/preprocess.py
     - celebA/config.py
     - celebA/utils/gcs_utils.py
@@ -15,3 +16,4 @@ include:
     - celebA/training.py
     - celebA/data/CelebA.py
     - celebA/models/archs/MobileNetV2.py
+pythonVersion: py38
