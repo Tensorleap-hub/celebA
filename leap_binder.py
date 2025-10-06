@@ -1,10 +1,8 @@
-from typing import Union
-
 import pandas as pd
-import numpy as np
 import PIL.Image as Image
-from keras import backend as K
-import tensorflow as tf
+from code_loader.default_metrics import categorical_crossentropy
+from code_loader.visualizers.default_visualizers import default_image_visualizer
+from code_loader.inner_leap_binder.leapbinder_decorators import *
 
 # Tensorleap imports
 from code_loader.contract.visualizer_classes import LeapHorizontalBar
@@ -12,13 +10,10 @@ from code_loader.contract.datasetclasses import PreprocessResponse
 from code_loader import leap_binder
 
 from celebA.utils.gcs_utils import _download
-from celebA.data.preprocess import preprocess_response
 from celebA.config import *
-from celebA.utils.metrics_utils import calc_class_metrics_dic
 
 
-# Input encoder fetches the image with the index `idx` from the data from set in
-# the PreprocessResponse's data.
+@tensorleap_input_encoder('image')
 def input_encoder(idx: int, preprocess: PreprocessResponse) -> np.ndarray:
     tf_data = preprocess.data['tf_data']
     sample = next(iter(tf_data.skip(idx)))
@@ -37,7 +32,7 @@ def input_encoder(idx: int, preprocess: PreprocessResponse) -> np.ndarray:
     image = image.crop((left, top, right, bottom))
     image = image.resize((IMAGE_SIZE, IMAGE_SIZE))
 
-    return np.array(image) / 255
+    return (np.array(image) / 255).astype(np.float32)
 
 
 def get_sample_row(idx: int, preprocess: Union[PreprocessResponse, list]) -> pd.Series:
@@ -48,12 +43,14 @@ def get_sample_row(idx: int, preprocess: Union[PreprocessResponse, list]) -> pd.
     return pd.Series(index=cols, data=labels_values[:len(cols)])
 
 
+@tensorleap_gt_encoder('classes')
 def gt_encoder(idx: int, preprocess: Union[PreprocessResponse, list]) -> np.ndarray:
     row = get_sample_row(idx, preprocess)
     labels_vec = np.array(row[LABELS] == 1)
     return labels_vec.astype(np.float32)
 
 
+@tensorleap_metadata('metadata_dic')
 def metadata_dic_vals(idx: int, preprocess: Union[PreprocessResponse, list]) -> dict:
     row = get_sample_row(idx, preprocess).astype(np.float32)
     row = dict(row)
@@ -62,29 +59,23 @@ def metadata_dic_vals(idx: int, preprocess: Union[PreprocessResponse, list]) -> 
     return dict(row)
 
 
+@tensorleap_custom_visualizer('horizontal_bar_classes', LeapHorizontalBar.type)
 def bar_visualizer(data: np.ndarray) -> LeapHorizontalBar:
     """ Use the default TL horizontal bar just with the classes names added """
     return LeapHorizontalBar(np.squeeze(data), LABELS)
 
 
+@tensorleap_custom_visualizer('image_viz', LeapDataType.Image)
+def image_viz(data):
+    return default_image_visualizer(data)
+
+
+@tensorleap_custom_loss('categorical_crossentropy_loss')
+def categorical_crossentropy_loss(y_true, y_pred):
+    return categorical_crossentropy(y_true, y_pred)
+
 
 # -------------- Dataset binding functions: --------------
-
-
-leap_binder.set_preprocess(function=preprocess_response)
-
-leap_binder.set_input(function=input_encoder, name='image')
-
-leap_binder.set_ground_truth(function=gt_encoder, name='classes')
-
-leap_binder.add_prediction(name='classes', labels=LABELS)
-
-leap_binder.set_metadata(metadata_dic_vals, 'metadata_dic')
-
-leap_binder.add_custom_metric(calc_class_metrics_dic, 'class_metrics_dic')
-
-leap_binder.set_visualizer(name='horizontal_bar_classes', function=bar_visualizer,
-                           visualizer_type=LeapHorizontalBar.type)
 
 
 if __name__ == "__main__":
