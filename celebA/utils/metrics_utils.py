@@ -2,6 +2,7 @@ from typing import Tuple, Dict, Any
 
 import numpy as np
 import tensorflow as tf
+from code_loader.inner_leap_binder.leapbinder_decorators import tensorleap_custom_metric
 from keras import backend
 
 from celebA.config import LABELS
@@ -50,6 +51,7 @@ def class_accuracy(y_true, y_pred, cls_ind) -> tf.Tensor:
     return backend.mean(tf.equal(y_true, y_pred), axis=-1)
 
 
+@tensorleap_custom_metric('calc_class_metrics_dic')
 def calc_class_metrics_dic(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, Any]:
     """
     Calculate multiple metrics for each class.

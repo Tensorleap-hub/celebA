@@ -1,9 +1,10 @@
-from typing import Tuple
+from typing import Tuple, List
 import tensorflow as tf
 import pandas as pd
 
 # Tensorleap imports
 from code_loader.contract.datasetclasses import PreprocessResponse
+from code_loader.inner_leap_binder.leapbinder_decorators import tensorleap_preprocess
 
 from celebA.config import att_path, partition_path, landmarks_path, align_landmarks_path, celeb_id_path, \
     train_size, val_size, test_size
@@ -42,19 +43,16 @@ def split_by_partition(df_attr):
 
 
 def df_to_tf_dataset(df_train, df_valid, df_test):
-
     tf_train = tf.data.Dataset.from_tensor_slices((df_train.index.values, df_train.values))
     tf_valid = tf.data.Dataset.from_tensor_slices((df_valid.index.values, df_valid.values))
     tf_test = tf.data.Dataset.from_tensor_slices((df_test.index.values, df_test.values))
     return tf_train, tf_valid, tf_test
 
 
-
 def preprocess_data():
-
     df_atrr = load_data()
     cols = df_atrr.columns
-    df_train, df_valid, df_test = split_by_partition(df_atrr)   # split subsets
+    df_train, df_valid, df_test = split_by_partition(df_atrr)  # split subsets
     tf_train = tf.data.Dataset.from_tensor_slices((df_train.index.values, df_train.values))
     tf_valid = tf.data.Dataset.from_tensor_slices((df_valid.index.values, df_valid.values))
     tf_test = tf.data.Dataset.from_tensor_slices((df_test.index.values, df_test.values))
@@ -63,13 +61,11 @@ def preprocess_data():
 
 
 # TL Preprocess Function:
-def preprocess_response() -> Tuple[PreprocessResponse, PreprocessResponse, PreprocessResponse]:
-
+@tensorleap_preprocess()
+def preprocess_response() -> List[PreprocessResponse]:
     tf_train, tf_valid, tf_test, cols = preprocess_data()
 
     train = PreprocessResponse(length=train_size, data=dict(tf_data=tf_train, columns=cols))
     val = PreprocessResponse(length=val_size, data=dict(tf_data=tf_valid, columns=cols))
     test = PreprocessResponse(length=test_size, data=dict(tf_data=tf_test, columns=cols))
-    return train, val, test
-
-
+    return [train, val, test]
