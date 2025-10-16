@@ -1,7 +1,7 @@
 import os
 
 from code_loader.contract.datasetclasses import PreprocessResponse, PredictionTypeHandler
-from code_loader.inner_leap_binder.leapbinder_decorators import tensorleap_load_model, integration_test
+from code_loader.inner_leap_binder.leapbinder_decorators import tensorleap_load_model, tensorleap_integration_test
 from code_loader.plot_functions.visualize import visualize
 
 from celebA.config import LABELS
@@ -21,7 +21,7 @@ def load_model():
     return model
 
 
-@integration_test()
+@tensorleap_integration_test()
 def check_custom_integration(idx, preprocess_subset: PreprocessResponse):
     print("started custom tests")
 
