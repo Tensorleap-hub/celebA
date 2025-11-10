@@ -25,10 +25,6 @@ def calculate_binary_metrics(y_true, y_pred) -> Tuple[np.ndarray, np.ndarray, np
     y_true = y_true.astype(bool)
     y_pred = y_pred.astype(bool)
 
-    # Boolean masks for presence of positives/negatives for each class (dim: num_classes,)
-    has_pos = np.any(y_true, axis=0)
-    has_neg = np.any(~y_true, axis=0)
-
     # Initialize outputs with NaNs
     tp = np.full_like(y_true, np.nan, dtype=np.float32)
     tn = np.full_like(y_true, np.nan, dtype=np.float32)
@@ -36,10 +32,10 @@ def calculate_binary_metrics(y_true, y_pred) -> Tuple[np.ndarray, np.ndarray, np
     fn = np.full_like(y_true, np.nan, dtype=np.float32)
 
     # Only compute for classes where true positives or negatives exist
-    tp[:, has_pos] = (y_true[:, has_pos] & y_pred[:, has_pos]).astype(np.float32)
-    fn[:, has_pos] = (y_true[:, has_pos] & ~y_pred[:, has_pos]).astype(np.float32)
-    tn[:, has_neg] = (~y_true[:, has_neg] & ~y_pred[:, has_neg]).astype(np.float32)
-    fp[:, has_neg] = (~y_true[:, has_neg] & y_pred[:, has_neg]).astype(np.float32)
+    tp[y_true] = (y_true[y_true] & y_pred[y_true]).astype(np.float32)
+    fn[y_true] = (y_true[y_true] & ~y_pred[y_true]).astype(np.float32)
+    tn[~y_true] = (~y_true[~y_true] & ~y_pred[~y_true]).astype(np.float32)
+    fp[~y_true] = (~y_true[~y_true] & y_pred[~y_true]).astype(np.float32)
 
     return tp, tn, fp, fn
 
