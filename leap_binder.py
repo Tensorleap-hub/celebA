@@ -13,7 +13,7 @@ from celebA.utils.gcs_utils import _download
 from celebA.config import *
 
 
-@tensorleap_input_encoder('image', channel_dim = -1)
+@tensorleap_input_encoder('image', channel_dim=-1)
 def input_encoder(idx: int, preprocess: PreprocessResponse) -> np.ndarray:
     tf_data = preprocess.data['tf_data']
     sample = next(iter(tf_data.skip(idx)))
