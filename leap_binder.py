@@ -77,6 +77,5 @@ def categorical_crossentropy_loss(y_true, y_pred):
 
 # -------------- Dataset binding functions: --------------
 
-
 if __name__ == "__main__":
     leap_binder.check()
