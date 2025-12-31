@@ -3,8 +3,9 @@ import tensorflow as tf
 import pandas as pd
 
 # Tensorleap imports
-from code_loader.inner_leap_binder.leapbinder_decorators import *
-
+from code_loader.contract.datasetclasses import PreprocessResponse
+from code_loader.inner_leap_binder.leapbinder_decorators import tensorleap_preprocess
+from code_loader.contract.datasetclasses import DataStateType
 from celebA.config import att_path, partition_path, landmarks_path, align_landmarks_path, celeb_id_path, \
     train_size, val_size, test_size
 from celebA.utils.gcs_utils import _download
