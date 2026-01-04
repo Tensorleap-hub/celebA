@@ -5,7 +5,7 @@ import pandas as pd
 # Tensorleap imports
 from code_loader.contract.datasetclasses import PreprocessResponse
 from code_loader.inner_leap_binder.leapbinder_decorators import tensorleap_preprocess
-
+from code_loader.contract.datasetclasses import DataStateType
 from celebA.config import att_path, partition_path, landmarks_path, align_landmarks_path, celeb_id_path, \
     train_size, val_size, test_size
 from celebA.utils.gcs_utils import _download
@@ -65,7 +65,7 @@ def preprocess_data():
 def preprocess_response() -> List[PreprocessResponse]:
     tf_train, tf_valid, tf_test, cols = preprocess_data()
 
-    train = PreprocessResponse(length=train_size, data=dict(tf_data=tf_train, columns=cols))
-    val = PreprocessResponse(length=val_size, data=dict(tf_data=tf_valid, columns=cols))
-    test = PreprocessResponse(length=test_size, data=dict(tf_data=tf_test, columns=cols))
+    train = PreprocessResponse(length=train_size, data=dict(tf_data=tf_train, columns=cols), state=DataStateType.training)
+    val = PreprocessResponse(length=val_size, data=dict(tf_data=tf_valid, columns=cols), state=DataStateType.validation)
+    test = PreprocessResponse(length=test_size, data=dict(tf_data=tf_test, columns=cols), state=DataStateType.test)
     return [train, val, test]

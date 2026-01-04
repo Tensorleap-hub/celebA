@@ -11,7 +11,7 @@ from leap_binder import input_encoder, gt_encoder, categorical_crossentropy_loss
     image_viz
 
 
-@tensorleap_load_model([PredictionTypeHandler('classes', LABELS)])
+@tensorleap_load_model([PredictionTypeHandler('classes', LABELS, channel_dim=-1)])
 def load_model():
     dir_path = os.path.dirname(os.path.abspath(__file__))
     model_path = 'celebA/models/GenderAgeBCELoss.h5'
