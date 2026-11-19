@@ -14,10 +14,10 @@ from leap_binder import input_encoder, gt_encoder, categorical_crossentropy_loss
 @tensorleap_load_model([PredictionTypeHandler('classes', LABELS, channel_dim=-1)])
 def load_model():
     dir_path = os.path.dirname(os.path.abspath(__file__))
-    model_path = 'celebA/models/GenderAgeBCELoss.h5'
+    model_path = 'celebA/models/GenderAgeBCELoss.onnx'
 
-    import tensorflow as tf
-    model = tf.keras.models.load_model(os.path.join(dir_path, model_path))
+    import onnxruntime as ort
+    model = ort.InferenceSession(os.path.join(dir_path, model_path))
     return model
 
 
@@ -28,7 +28,7 @@ def check_custom_integration(idx, preprocess_subset: PreprocessResponse):
     model = load_model()
     img = input_encoder(idx, preprocess_subset)
     gt = gt_encoder(idx, preprocess_subset)
-    pred = model(img)
+    pred = model.run(None, {model.get_inputs()[0].name: img})[0]
 
     res = calc_class_metrics_dic(y_true=gt, y_pred=pred)
 
